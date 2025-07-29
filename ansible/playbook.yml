@@ -1,0 +1,24 @@
+- name: Deploy Flask App using Ansible on Kubernetes
+  hosts: localhost
+  connection: local
+  tasks:
+
+    - name: Build Docker image
+      community.docker.docker_image:
+        build:
+          path: ../app
+        name: flask-app
+        tag: v1
+        source: build
+
+    - name: Apply Deployment to Kubernetes
+      kubernetes.core.k8s:
+        state: present
+        src: ../k8s/deployment.yaml
+        namespace: default
+
+    - name: Apply Service to Kubernetes
+      kubernetes.core.k8s:
+        state: present
+        src: ../k8s/service.yaml
+        namespace: default
